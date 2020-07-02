@@ -50,6 +50,19 @@ async def location(ctx):
     await ctx.channel.send(f"R.A.M's currently in: {data['ram_location']}")
 
 @bot.command()
+async def id(ctx):
+    """
+    Get R.A.M.'s player ID"""
+
+    data = await get_data()
+
+    if not data['ram_online']: 
+        await ctx.channel.send(":x: R.A.M. Is currently offline. Check back later!")
+        return
+
+    await ctx.channel.send(f"R.A.M's player ID is: {data['ram_pid']}")
+
+@bot.command()
 async def status(ctx):
     """
     Get all stats from R.A.M."""
@@ -64,8 +77,9 @@ async def status(ctx):
     # Create the information embed
     embed = discord.Embed(title="R.A.M. Status Tracker", 
     timestamp=parser.parse(data['last_uplink_time']),
-    colour=discord.Colour(0x18cc0f))
-    embed.set_footer(text="Data last updated")
+    colour=discord.Colour(0x18cc0f),
+    description=f"R.A.M. Is online! Player ID: {data['ram_pid']}")
+    embed.set_footer(text="By Autonomous Team Devs | Data last updated")
 
     if data['ram_parameters']['vehicle']['data'] == "Truck":
         embed.set_thumbnail(url=config.images['vehicle_truck'])
@@ -87,18 +101,15 @@ async def status(ctx):
 
 async def update_status():
     while True:
-        print("A")
         if bot.user: 
-            print("B")
             data = await get_data()
             
             if data['ram_online']:
-                game = discord.Game(f"on {data['ram_server']} in {data['ram_location']}")
+                game = discord.Game(f"on {data['ram_server']} in {data['ram_location']} " +
+                                                                    f"({data['ram_pid']})")
                 await bot.change_presence(status=discord.Status.online, activity=game)
             else:
                 await bot.change_presence(status=discord.Status.dnd)
-
-            print("C")
 
         await asyncio.sleep(60)
 
