@@ -24,6 +24,28 @@ async def on_ready():
     bot.loop.create_task(update_status())
 
 @bot.command()
+@commands.has_role("Developers")
+async def f_online(ctx, enable="on"):
+    """
+    Set the force_online flag, use 'on' or 'off' to toggle.
+    This forces the API to report 'online' used for debugging the R.A.M telemetry system.
+    
+    You must have the 'Developers' role to use this command."""
+
+    if enable == "on":
+        async with aiohttp.ClientSession() as session:
+            async with session.post(f"{config.api_loc}/online") as resp:
+
+                if resp.status == 200:
+                    await ctx.channel.send(f"`{await resp.text()}`")
+    else:
+        async with aiohttp.ClientSession() as session:
+            async with session.delete(f"{config.api_loc}/online") as resp:
+
+                if resp.status == 200:
+                    await ctx.channel.send(f"`{await resp.text()}`")
+
+@bot.command()
 async def server(ctx):
     """
     Get R.A.M.'s current server"""
@@ -106,7 +128,7 @@ async def update_status():
             
             if data['ram_online']:
                 game = discord.Game(f"on {data['ram_server']} in {data['ram_location']} " +
-                                                                    f"({data['ram_pid']})")
+                                                                    f"(ID: {data['ram_pid']})")
                 await bot.change_presence(status=discord.Status.online, activity=game)
             else:
                 await bot.change_presence(status=discord.Status.dnd)
