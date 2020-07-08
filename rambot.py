@@ -7,6 +7,7 @@ import asyncio
 import aiohttp, json
 from datetime import datetime
 from dateutil import parser
+import random
 
 bot = commands.Bot(command_prefix=config.prefix)
 
@@ -70,7 +71,12 @@ async def status(ctx):
     data = await get_data()
     
     if not data['ram_online']:
-        await ctx.channel.send(":x: R.A.M. Is currently offline. Check back later!")
+        # 1 in 50 chance of easter egg.
+        if random.randint(1, 51) == 35:
+            await ctx.channel.send("https://tenor.com/view/kawaii-cute-anime-dance-gif-15776666")
+        else:
+            await ctx.channel.send(":x: R.A.M. Is currently offline. Check back later!")
+        
         return
 
 
