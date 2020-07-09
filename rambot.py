@@ -124,6 +124,7 @@ async def status(ctx):
     embed.add_field(name="📌 Drive Path", value=x['path']['data'], inline=False)
     embed.add_field(name="⌨ Vehicle Control Mode", value=x['control_mode']['data'])
     embed.add_field(name="💥 Vehicle Damage", value=x['vehicle_damage']['data'])
+    embed.add_field(name="⛽ Fuel Level", value=x['vehicle_fuel_level']['data'])
 
     await ctx.channel.send("R.A.M. Status", embed=embed)
 
